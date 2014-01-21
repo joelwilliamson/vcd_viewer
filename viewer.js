@@ -79,5 +79,5 @@ function display_as_text(waveform) {
 	}
 
 function main() {
-	get_file(file_uri,function render(response) {display_as_text(parse_vcd(response.responseText))});
+	get_file(file_uri,function render() {display_as_text(parse_vcd(this.responseText))});
 	}
