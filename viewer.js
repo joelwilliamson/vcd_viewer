@@ -1,7 +1,7 @@
 // View VCD files
 
 
-var file_uri = "/home/joel/Documents/cs450/cla_tb.vcd";
+var file_uri = "test_data/cla_tb.vcd";
 
 function get_file(uri,callback) {
 	var request = new XMLHttpRequest();
