@@ -11,29 +11,29 @@ function get_file(uri,callback) {
 	}
 
 function parse_vcd(text) {
-	var waveform;
+	var waveform = {};
 	var tokens = text.match(/\S+/g);
 	var lines = text.split("\n");
 	// Get the date
 	var index;
-	for (index=0;tokens[index] != "$date";index++) {}
-	waveform.date = tokens[index+1];
+	for (index=0;lines[index] != "$date";index++) {}
+	waveform.date = lines[index+1];
 	
 	// Compiler
 	for (index=0;tokens[index] != "$version";index++) {}
 	index++;
 	var end_index;
-	for (end_index = index; tokens[index] != "$end"; index++) {}
-	waveform.compiler_version = tokens.slice(index,end_index);
+	for (end_index = index; tokens[end_index] != "$end"; end_index++) {}
+	waveform.compiler_version = tokens.slice(index,end_index).join(" ");
 
 	// Timescale
 	for (index=0; tokens[index] != "$timescale"; index++) []
 	waveform.timescale = tokens[index+1];
 	
 	waveform.variables = {}
-	for (; !lines[index].match("$enddefinitions"); index++) {
+	for (index=0; !lines[index].match(/enddefinitions/); index++) {
+		var line_tokens = lines[index].match(/\S+/g);
 		if (line_tokens[0] == "$var") {
-			var line_tokens = lines[index].match(/\S+/g);
 			// $var is token 0
 			var type = line_tokens[1];
 			var size = line_tokens[2];
@@ -50,22 +50,23 @@ function parse_vcd(text) {
 		}
 	// lines[index] is the last line before the value change section
 	// The next line should be the beginning of variables
+	index++;
 	var current_time = 0;
-	lines.slice(index).map( function (line) {
-		if (line[0] = "#") {
+	lines.slice(index).filter( function (line) { return !!line }).map( function (line) {
+		if (line[0] == "#") {
 			current_time = parseInt(line.slice(1))
 			}
-		if (line[0] = "$") {
+		else if (line[0] == "$") {
 			// This is a directive
 			// Ignore it for now
 			}
 		// The line is a value change
-		if (line[0] != "b") {
+		else if (line[0] != "b") {
 			waveform.variables[line.slice(1)].values.push({"time":current_time, "value":(parseInt(line[0])?parseInt(line[0]):line[0])})
 			}
 		else { // This is a multibit value
-			value = line.match("/\S+/g")[0].slice(1)
-			name = line.match("/\S+/g")[1]
+			value = line.match(/\S+/g)[0].slice(1)
+			name = line.match(/\S+/g)[1]
 			value = parseInt(value)?parseInt(value):value
 			waveform.variables[name].values.push({"time":current_time,"value":value})
 			}
@@ -76,7 +77,7 @@ function parse_vcd(text) {
 function display_as_text(waveform) {
 	var root_element = document.getElementById("root");
 	var compiler_div = document.createElement("div")
-	compiler_div.appendChild(document.createTextNode(waveform.compiler_version));
+	compiler_div.appendChild(document.createTextNode("Wavedump created by :" waveform.compiler_version));
 	root_element.appendChild(compiler_div);
 	}
 
