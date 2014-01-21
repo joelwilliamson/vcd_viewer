@@ -1,0 +1,89 @@
+$date
+	Tue Jan 21 09:40:06 2014
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module cla_tb $end
+$var reg 4 ! a [3:0] $end
+$upscope $end
+$scope module cla_tb $end
+$var reg 4 " b [3:0] $end
+$upscope $end
+$scope module cla_tb $end
+$var reg 1 # c_in $end
+$upscope $end
+$scope module cla_tb $end
+$var wire 4 $ c [3:0] $end
+$upscope $end
+$scope module cla_tb $end
+$var wire 1 % c_out $end
+$upscope $end
+$scope module cla_tb $end
+$var wire 1 & gg $end
+$upscope $end
+$scope module cla_tb $end
+$var wire 1 ' gp $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+z'
+x&
+x%
+bx $
+0#
+b0 "
+b0 !
+$end
+#2
+0'
+0%
+#3
+0&
+bx0 $
+#5
+b0 $
+#10
+b1010 !
+#12
+b1010 $
+#20
+b101 "
+#22
+1'
+b1111 $
+#30
+1#
+#32
+1&
+1%
+#33
+b1110 $
+#34
+b0 $
+#40
+b0 "
+b0 !
+0#
+#42
+0'
+0&
+0%
+b1110 $
+#44
+b0 $
+#50
+b110 !
+#52
+b110 $
+#60
+b101 "
+#62
+b11 $
+#65
+b1011 $
+#80
