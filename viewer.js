@@ -12,7 +12,7 @@ function get_file(uri,callback) {
 
 function parse_vcd(text) {
 	var waveform;
-	var tokens = text.match("/\S+/g");
+	var tokens = text.match(/\S+/g);
 	var lines = text.split("\n");
 	// Get the date
 	var index;
@@ -32,18 +32,20 @@ function parse_vcd(text) {
 	
 	waveform.variables = {}
 	for (; !lines[index].match("$enddefinitions"); index++) {
-		var line_tokens = lines[index].match("/\S+/g");
-		// $var is token 0
-		var type = line_tokens[1];
-		var size = line_tokens[2];
-		var identifier = line_tokens[3];
-		var reference = line_tokens[4];
-	//	var indices = line_tokens[5] != "$end" ? line_tokens[5] : null;
-		waveform.variables[identifier] = {"type":type,
-			"size":size,
-			"identifier":identifier,
-			"reference":reference,
-			"values": []
+		if (line_tokens[0] == "$var") {
+			var line_tokens = lines[index].match(/\S+/g);
+			// $var is token 0
+			var type = line_tokens[1];
+			var size = line_tokens[2];
+			var identifier = line_tokens[3];
+			var reference = line_tokens[4];
+		//	var indices = line_tokens[5] != "$end" ? line_tokens[5] : null;
+			waveform.variables[identifier] = {"type":type,
+				"size":size,
+				"identifier":identifier,
+				"reference":reference,
+				"values": []
+				}
 			}
 		}
 	// lines[index] is the last line before the value change section
