@@ -67,7 +67,7 @@ function parse_vcd(text) {
 			value = parseInt(value)?parseInt(value):value
 			waveform.variables[name].values.push({"time":current_time,"value":value})
 			}
-		}
+		});
 	return waveform;
 	}
 
