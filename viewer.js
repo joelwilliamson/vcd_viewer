@@ -1,7 +1,7 @@
 // View VCD files
 
 
-var file_uri = "test_data/cla_tb.vcd";
+var default_file_uri = "test_data/cla_tb.vcd";
 
 function get_file(uri,callback) {
 	var request = new XMLHttpRequest();
@@ -170,6 +170,13 @@ function draw_waveform(waveform) {
 		});
 	}
 
-function main() {
+function main(file_uri) {
+	if (typeof file_uri === 'undefined') { file_uri = default_file_uri; }
+	default_file_uri = file_uri;
 	get_file(file_uri,function render() {draw_waveform(parse_vcd(this.responseText))});
+	}
+
+function alert_url() {
+	var file_uri = document.getElementById("url_input").value;
+	main(file_uri);
 	}
