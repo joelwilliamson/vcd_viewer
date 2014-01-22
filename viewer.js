@@ -137,6 +137,9 @@ function draw_waveform(waveform) {
 		ctx.beginPath();
 		var x = timeToX(0);
 		var y = waveform_bottom;
+		ctx.fillStyle = variableList.length%2?"rgb(240,240,240)":"rgb(255,255,255)";
+		ctx.fillRect(0,waveform_bottom-5,width,waveform_top-5);
+		ctx.fillStyle = "rgb(0,0,0)";
 		ctx.moveTo(x,y);
 		for (i = 0; i < variable.values.length; i++) {
 			x = timeToX(variable.values[i].time);
