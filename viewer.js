@@ -1,8 +1,6 @@
 // View VCD files
 
 
-var default_file_uri = "test_data/cla_tb.vcd";
-
 function get_file(uri,callback) {
 	var request = new XMLHttpRequest();
 	request.onload = callback;
@@ -108,6 +106,7 @@ function draw_waveform(waveform) {
 	for (v in waveform.variables) { numberWaves++; }
 	height = numberWaves*(10+waveform_height);
 	canvas.setAttribute("height",height);
+	canvas.setAttribute("width",width);
 
 
 	function timeToX (time) {
@@ -142,7 +141,7 @@ function draw_waveform(waveform) {
 		for (i = 0; i < variable.values.length; i++) {
 			x = timeToX(variable.values[i].time);
 			ctx.lineTo(x,y);
-			y = waveform_top - waveform_height*variable.values[i].value/Math.pow(2, variable.size);
+			y = waveform_top - waveform_height*variable.values[i].value/(Math.pow(2, variable.size)-1);
 			ctx.lineTo(x,y);
 			}
 		x = timeToX(waveform.maxTime);
@@ -154,13 +153,7 @@ function draw_waveform(waveform) {
 		waveform_top += waveform_height+10;
 		}
 	canvas.addEventListener('mousemove',function mouseHandler (e) {
-		var tooltipCanvas = document.getElementById("tooltip_canvas");
-		var ttCtx = tooltipCanvas.getContext("2d");
-		ttCtx.fillStyle = "rgb(255,255,255)";
-		ttCtx.fillRect(0,0,100,40);
 		coord = getCanvasCoordinates("waveform_canvas",e.clientX,e.clientY);
-		ttCtx.fillStyle = "rgb(0,0,0)";
-		ttCtx.fillText("Time: " + xToTime(coord.x),0,0);
 		var tooltipDiv = document.getElementById("tooltip_div");
 		var newText = "Time: " + Math.floor(xToTime(coord.x));
 		newText += " Wave: " + waveform.variables[yToIdentifier(coord.y)].reference;
@@ -172,11 +165,16 @@ function draw_waveform(waveform) {
 
 function main(file_uri) {
 	if (typeof file_uri === 'undefined') { file_uri = default_file_uri; }
-	default_file_uri = file_uri;
 	get_file(file_uri,function render() {draw_waveform(parse_vcd(this.responseText))});
 	}
 
-function alert_url() {
+function submit_url() {
 	var file_uri = document.getElementById("url_input").value;
 	main(file_uri);
+	var inputDiv = document.getElementById("input_div")
+	inputDiv.parentElement.removeChild(inputDiv);
+	}
+
+function urlKeyPress(e) {
+	if (e.keyCode == 13) { submit_url (); }
 	}
