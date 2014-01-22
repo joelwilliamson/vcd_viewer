@@ -62,12 +62,12 @@ function parse_vcd(text) {
 			}
 		// The line is a value change
 		else if (line[0] != "b") {
-			waveform.variables[line.slice(1)].values.push({"time":current_time, "value":(parseInt(line[0])?parseInt(line[0]):line[0])})
+			waveform.variables[line.slice(1)].values.push({"time":current_time, "value":(isFinite(line[0])?parseInt(line[0],2):line[0])})
 			}
 		else { // This is a multibit value
 			value = line.match(/\S+/g)[0].slice(1)
 			name = line.match(/\S+/g)[1]
-			value = parseInt(value)?parseInt(value):value
+			value = isFinite(value)?parseInt(value,2):value
 			waveform.variables[name].values.push({"time":current_time,"value":value})
 			}
 		});
@@ -76,11 +76,45 @@ function parse_vcd(text) {
 
 function display_as_text(waveform) {
 	var root_element = document.getElementById("root");
-	var compiler_div = document.createElement("div")
-	compiler_div.appendChild(document.createTextNode("Wavedump created by :" waveform.compiler_version));
+	var compiler_div = document.createElement("div");
+	compiler_div.appendChild(document.createTextNode("Wavedump created by :" + waveform.compiler_version));
 	root_element.appendChild(compiler_div);
+	var date_div = document.createElement("div");
+	date_div.appendChild(document.createTextNode("Created on: " + waveform.date))
+	root_element.appendChild(date_div);
+	}
+
+function draw_waveform(waveform) {
+	var canvas = document.getElementById("waveform_canvas");	
+	var ctx = canvas.getContext("2d");
+
+	var width = 1000;
+	var height = 600;
+	var waveform_height = 50;
+	var waveform_bottom = 10;
+	var waveform_top = waveform_bottom + waveform_height;
+	for (v in waveform.variables) {
+		variable = waveform.variables[v];
+		ctx.beginPath();
+		var x = 0;
+		var y = waveform_bottom;
+		ctx.moveTo(x,y);
+		for (i = 0; i < variable.values.length; i++) {
+			x = variable.values[i].time*12;
+			ctx.lineTo(x,y);
+			y = waveform_top - waveform_height*variable.values[i].value/Math.pow(2, variable.size);
+			ctx.lineTo(x,y);
+			}
+		x = width-100;
+		ctx.lineTo(x,y);
+		ctx.stroke();
+		ctx.font = "16pt Helvetica";
+		ctx.fillText(variable.reference,x,waveform_bottom + waveform_height/2);
+		waveform_bottom += waveform_height+10;
+		waveform_top += waveform_height+10;
+		}
 	}
 
 function main() {
-	get_file(file_uri,function render() {display_as_text(parse_vcd(this.responseText))});
+	get_file(file_uri,function render() {draw_waveform(parse_vcd(this.responseText))});
 	}
