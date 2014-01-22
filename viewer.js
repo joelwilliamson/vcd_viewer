@@ -71,6 +71,7 @@ function parse_vcd(text) {
 			waveform.variables[name].values.push({"time":current_time,"value":value})
 			}
 		});
+	waveform.maxTime = current_time;
 	return waveform;
 	}
 
@@ -84,28 +85,67 @@ function display_as_text(waveform) {
 	root_element.appendChild(date_div);
 	}
 
+function getCanvasCoordinates (id, clientX, clientY) {
+	var canvasOffset = document.getElementById(id).getBoundingClientRect();
+	var offsetX = canvasOffset.left;
+	var offsetY = canvasOffset.top;
+	return {"x":clientX-offsetX, "y":clientY-offsetY};
+	}
+
 function draw_waveform(waveform) {
 	var canvas = document.getElementById("waveform_canvas");	
 	var ctx = canvas.getContext("2d");
+	var variableList = [];
 
-	var width = 1000;
 	var height = 600;
+	var width = 1000;
+	canvas.width.value = width;
 	var waveform_height = 50;
 	var waveform_bottom = 10;
 	var waveform_top = waveform_bottom + waveform_height;
+
+	var numberWaves = 0;
+	for (v in waveform.variables) { numberWaves++; }
+	height = numberWaves*(10+waveform_height);
+	canvas.setAttribute("height",height);
+
+
+	function timeToX (time) {
+		return (width-100) * (time/waveform.maxTime);
+		}
+	function xToTime (x) {
+		return (x * waveform.maxTime) / (width - 100);
+		}
+	
+	function yToIdentifier(y) {
+		return variableList[Math.floor(y/60)];
+		}
+	
+	function timeToValue(variable,time) {
+		var value = variable.values[0].value;
+		for (i in variable.values) {
+			if (variable.values[i].time > time) {
+				return value;
+				}
+			value = variable.values[i].value;
+			}
+		return value;
+		}
+
 	for (v in waveform.variables) {
 		variable = waveform.variables[v];
+		variableList.push(v)
 		ctx.beginPath();
-		var x = 0;
+		var x = timeToX(0);
 		var y = waveform_bottom;
 		ctx.moveTo(x,y);
 		for (i = 0; i < variable.values.length; i++) {
-			x = variable.values[i].time*12;
+			x = timeToX(variable.values[i].time);
 			ctx.lineTo(x,y);
 			y = waveform_top - waveform_height*variable.values[i].value/Math.pow(2, variable.size);
 			ctx.lineTo(x,y);
 			}
-		x = width-100;
+		x = timeToX(waveform.maxTime);
 		ctx.lineTo(x,y);
 		ctx.stroke();
 		ctx.font = "16pt Helvetica";
@@ -113,6 +153,21 @@ function draw_waveform(waveform) {
 		waveform_bottom += waveform_height+10;
 		waveform_top += waveform_height+10;
 		}
+	canvas.addEventListener('mousemove',function mouseHandler (e) {
+		var tooltipCanvas = document.getElementById("tooltip_canvas");
+		var ttCtx = tooltipCanvas.getContext("2d");
+		ttCtx.fillStyle = "rgb(255,255,255)";
+		ttCtx.fillRect(0,0,100,40);
+		coord = getCanvasCoordinates("waveform_canvas",e.clientX,e.clientY);
+		ttCtx.fillStyle = "rgb(0,0,0)";
+		ttCtx.fillText("Time: " + xToTime(coord.x),0,0);
+		var tooltipDiv = document.getElementById("tooltip_div");
+		var newText = "Time: " + Math.floor(xToTime(coord.x));
+		newText += " Wave: " + waveform.variables[yToIdentifier(coord.y)].reference;
+		newText += " Value: " + timeToValue(waveform.variables[yToIdentifier(coord.y)],xToTime(coord.x));
+		tooltipDiv.childNodes[0].replaceWholeText(newText);
+//		alert("Time: " + xToTime(coord.x));
+		});
 	}
 
 function main() {
