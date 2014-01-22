@@ -1,0 +1,90 @@
+$date
+	Wed Jan 22 15:35:20 2014
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module xor_earle_tb $end
+$var reg 1 ! a $end
+$upscope $end
+$scope module xor_earle_tb $end
+$var reg 1 " b $end
+$upscope $end
+$scope module xor_earle_tb $end
+$var reg 1 # c $end
+$upscope $end
+$scope module xor_earle_tb $end
+$var wire 1 $ out $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+x$
+x#
+0"
+0!
+$end
+#2
+0#
+#20
+1#
+#22
+0#
+#23
+0$
+#40
+1#
+#42
+0#
+#50
+1!
+#60
+1#
+#62
+0#
+#63
+1$
+#65
+0$
+#66
+1$
+#80
+1#
+#82
+0#
+#100
+1#
+0!
+#102
+0#
+#103
+0$
+#120
+1#
+#122
+0#
+#140
+1#
+#142
+0#
+#150
+1!
+#160
+1#
+#162
+0#
+#163
+1$
+#165
+0$
+#166
+1$
+#180
+1#
+#182
+0#
+#200
+1#
