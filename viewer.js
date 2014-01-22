@@ -165,7 +165,7 @@ function draw_waveform(waveform) {
 		var newText = "Time: " + Math.floor(xToTime(coord.x));
 		newText += " Wave: " + waveform.variables[yToIdentifier(coord.y)].reference;
 		newText += " Value: " + timeToValue(waveform.variables[yToIdentifier(coord.y)],xToTime(coord.x));
-		tooltipDiv.childNodes[0].replaceWholeText(newText);
+		tooltipDiv.childNodes[0].replaceData(0,100,newText);
 //		alert("Time: " + xToTime(coord.x));
 		});
 	}
