@@ -1,3 +1,13 @@
 #url_input {
 	width: 40em;
 	}
+
+#tooltip_div {
+	position:absolute;
+	background-color: #ffd;
+	top: 100px;
+	left: 100px;
+	border:solid;
+	border-color:#000;
+	border-width:1px;
+	}

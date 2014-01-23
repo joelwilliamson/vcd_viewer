@@ -167,15 +167,18 @@ function draw_waveform(waveform) {
 		waveform_bottom += waveform_height+10;
 		waveform_top += waveform_height+10;
 		}
-	canvas.addEventListener('mousemove',function mouseHandler (e) {
+	function mouseHandler (e) {
 		coord = getCanvasCoordinates("waveform_canvas",e.clientX,e.clientY);
 		var tooltipDiv = document.getElementById("tooltip_div");
 		var newText = "Time: " + Math.floor(xToTime(coord.x));
 		newText += " Wave: " + waveform.variables[yToIdentifier(coord.y)].reference;
 		newText += " Value: " + timeToValue(waveform.variables[yToIdentifier(coord.y)],xToTime(coord.x));
 		tooltipDiv.childNodes[0].replaceData(0,100,newText);
-//		alert("Time: " + xToTime(coord.x));
-		});
+		tooltipDiv.style.left = e.clientX+10+'px';
+		tooltipDiv.style.top = e.clientY+'px';
+		}
+	canvas.addEventListener('mousemove',mouseHandler);
+	document.getElementById("tooltip_div").addEventListener('mousemove',mouseHandler);
 	}
 
 function main(file_uri) {
