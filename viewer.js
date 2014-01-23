@@ -146,6 +146,18 @@ function draw_waveform(waveform) {
 			ctx.lineTo(x,y);
 			y = waveform_top - waveform_height*variable.values[i].value/(Math.pow(2, variable.size)-1);
 			ctx.lineTo(x,y);
+			if (String(variable.values[i].value).match('z')) {
+				var oldStyle = ctx.fillStyle;
+				ctx.fillStyle = "rgb(200,200,255)";
+				ctx.fillRect(x,waveform_bottom-5,timeToX((i+1<variable.values.length)?variable.values[i+1].time:waveform.maxTime),waveform_top-5);
+				ctx.fillStyle = oldStyle;
+				}
+			if (String(variable.values[i].value).match('x')) {
+				var oldStyle = ctx.fillStyle;
+				ctx.fillStyle = "rgb(200,255,200)";
+				ctx.fillRect(x,waveform_bottom-5,timeToX((i+1<variable.values.length)?variable.values[i+1].time:waveform.maxTime),waveform_top-5);
+				ctx.fillStyle = oldStyle;
+				}
 			}
 		x = timeToX(waveform.maxTime);
 		ctx.lineTo(x,y);
@@ -171,13 +183,26 @@ function main(file_uri) {
 	get_file(file_uri,function render() {draw_waveform(parse_vcd(this.responseText))});
 	}
 
-function submit_url() {
+function submitUrl() {
 	var file_uri = document.getElementById("url_input").value;
 	main(file_uri);
 	var inputDiv = document.getElementById("input_div")
 	inputDiv.parentElement.removeChild(inputDiv);
 	}
 
-function urlKeyPress(e) {
-	if (e.keyCode == 13) { submit_url (); }
+function submitLocalFile() {
+	var file_uri = window.URL.createObjectURL(document.getElementById("file_input").files[0]);
+	main(file_uri);
+	var inputDiv = document.getElementById("input_div")
+	inputDiv.parentElement.removeChild(inputDiv);
 	}
+
+function urlKeyPress(e) {
+	if (e.keyCode == 13) { submitUrl (); }
+	}
+
+document.addEventListener('DOMContentLoaded',function () {
+	document.querySelector('button').addEventListener('click',submitUrl);
+	document.querySelector('#url_input').addEventListener('keyup',urlKeyPress);
+	document.querySelector('#file_input').addEventListener('change',submitLocalFile);
+	});
