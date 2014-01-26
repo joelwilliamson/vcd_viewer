@@ -1,5 +1,5 @@
 // View VCD files
-
+var waveform;
 
 function get_file(uri,callback) {
 	var request = new XMLHttpRequest();
@@ -90,7 +90,9 @@ function getCanvasCoordinates (id, clientX, clientY) {
 	return {"x":clientX-offsetX, "y":clientY-offsetY};
 	}
 
-function draw_waveform(waveform) {
+function draw_waveform(waveform,scale) {
+	if (typeof scale === 'undefined') scale = 1;
+	
 	var canvas = document.getElementById("waveform_canvas");	
 	var ctx = canvas.getContext("2d");
 	var variableList = [];
@@ -107,13 +109,15 @@ function draw_waveform(waveform) {
 	height = numberWaves*(10+waveform_height);
 	canvas.setAttribute("height",height);
 	canvas.setAttribute("width",width);
+	ctx.fillStyle = '#fff';
+	ctx.fillRect(0,0,width,height);
 
 
 	function timeToX (time) {
-		return (width-100) * (time/waveform.maxTime);
+		return (width-100) * (time/waveform.maxTime)*scale;
 		}
 	function xToTime (x) {
-		return (x * waveform.maxTime) / (width - 100);
+		return (x * waveform.maxTime) / ((width - 100)*scale);
 		}
 	
 	function yToIdentifier(y) {
@@ -183,7 +187,10 @@ function draw_waveform(waveform) {
 
 function main(file_uri) {
 	if (typeof file_uri === 'undefined') { file_uri = default_file_uri; }
-	get_file(file_uri,function render() {draw_waveform(parse_vcd(this.responseText))});
+	document.querySelector('#display_div').style.display="block";
+	get_file(file_uri,function render() {
+		waveform = parse_vcd(this.responseText)
+		draw_waveform(waveform)});
 	}
 
 function submitUrl() {
@@ -205,7 +212,18 @@ function urlKeyPress(e) {
 	}
 
 document.addEventListener('DOMContentLoaded',function () {
-	document.querySelector('button').addEventListener('click',submitUrl);
+	document.querySelector('#file_button').addEventListener('click',submitUrl);
 	document.querySelector('#url_input').addEventListener('keyup',urlKeyPress);
 	document.querySelector('#file_input').addEventListener('change',submitLocalFile);
+	document.querySelector('#display_div').style.display="none";
+	var scale = 1;
+	document.querySelector('#zoom_in').addEventListener('click',function () {
+		scale *= 1.5;
+		draw_waveform(waveform,scale);
+		});
+	document.querySelector('#zoom_out').addEventListener('click',function () {
+		scale *= (2/3)
+		draw_waveform(waveform,scale);
+		});
 	});
+
