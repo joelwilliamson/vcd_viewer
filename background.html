@@ -8,8 +8,12 @@
 
 <body>
 <div id="root"></div>
-<canvas id="waveform_canvas" width=0 height = 0></canvas>
-<div id="tooltip_div"> </div>
+<div id="display_div">
+	<canvas id="waveform_canvas" width=0 height = 0></canvas>
+	<div id="tooltip_div"> </div>
+	<button id="zoom_in">Zoom In</button>
+	<button id="zoom_out">Zoom Out</button>
+</div>
 <div id="input_div">
 	<input autofocus=true autocomplete=true id="url_input" type="text" width="200">Remote Waveform File</input>
 	<button id="file_button">Submit</button>
