@@ -138,9 +138,11 @@ function draw_waveform(waveform,scale) {
 	for (v in waveform.variables) {
 		variable = waveform.variables[v];
 		var maxValue = 0;
-		for (i in variable.values)
+		for (i in variable.values) {
 			if (variable.values[i] > maxValue)
 				maxValue = variable.values[i];
+			console.log("Max value: "+maxValue);
+			}
 		variableList.push(v)
 		ctx.beginPath();
 		var x = timeToX(0);
