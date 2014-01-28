@@ -137,6 +137,10 @@ function draw_waveform(waveform,scale) {
 
 	for (v in waveform.variables) {
 		variable = waveform.variables[v];
+		var maxValue = 0;
+		for (i in variable.values)
+			if (variable.values[i] > maxValue)
+				maxValue = variable.values[i];
 		variableList.push(v)
 		ctx.beginPath();
 		var x = timeToX(0);
@@ -148,7 +152,7 @@ function draw_waveform(waveform,scale) {
 		for (i = 0; i < variable.values.length; i++) {
 			x = timeToX(variable.values[i].time);
 			ctx.lineTo(x,y);
-			y = waveform_top - waveform_height*variable.values[i].value/(Math.pow(2, variable.size)-1);
+			y = waveform_top - waveform_height*variable.values[i].value/maxValue;
 			ctx.lineTo(x,y);
 			if (String(variable.values[i].value).match('z')) {
 				var oldStyle = ctx.fillStyle;
