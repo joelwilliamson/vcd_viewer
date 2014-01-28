@@ -141,6 +141,7 @@ function draw_waveform(waveform,scale) {
 		for (i in variable.values) {
 			if (variable.values[i] > maxValue)
 				maxValue = variable.values[i];
+			console.log("Current value: " + variable.values);
 			console.log("Max value: "+maxValue);
 			}
 		variableList.push(v)
